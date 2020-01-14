@@ -14,7 +14,7 @@ const sensorDataSchema = new Schema({
     type: String,
     required: true
   },
-  NOX: {
+  nox: {
     type: String,
     required: true
   },
