@@ -37,22 +37,26 @@ app.post("/send", (req, res) => {
   var nox = req.body.nox; 
   var temperature = req.body.temp; 
   var efficiency = req.body.efficiency; 
-  SensorData.findOne({ engineId })
-    .then(user => {
-      if (user) {
-        // change status code
-        res.json({ idErr: "Id is already added" });
-      } else {
-        const newEntry = new SensorData({
-          engineId, massFlow, dieselFlow, nox, temperature, efficiency
-        });
-        newEntry
-          .save()
-          .then(user => res.json(user))
-          .catch(err => console.log("DB Error : " + err));
-      }
-    })
-    .catch(err => console.log("Error : " + err));
+  const newEntry = new SensorData({
+    engineId, massFlow, dieselFlow, nox, temperature, efficiency
+  });
+  newEntry
+    .save()
+    .then(user => res.json(user))
+    .catch(err => console.log("DB Error : " + err));
 });
+
+app.post("/view",(req,res)=>{
+  var engineId = req.body.engineid;
+  SensorData.find({ engineId })
+  .then(user => {
+    if (user) {
+      res.json(user);
+    } else {
+      res.json({ idErr: "Id is not added" });
+    }
+  })
+  .catch(err => console.log("Error : " + err));
+})
 
 app.listen(PORT, () => console.log(`Server running at port ${PORT}`));
