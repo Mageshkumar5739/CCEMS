@@ -28,7 +28,7 @@ app.get("/", (req, res) => {
   res.render("index");
 });
 
-app.post("/send", (req, res) => {
+app.get("/send", (req, res) => {
   // add data to cloud
   res.send("DB : " + isConnected)
 });
