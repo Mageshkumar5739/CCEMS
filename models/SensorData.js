@@ -2,28 +2,29 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const sensorDataSchema = new Schema({
-  name: {
+  engineId: {
     type: String,
     required: true
   },
-  email: {
+  dieselFlow: {
     type: String,
     required: true
   },
-  accessToken: {
+  massFlow: {
     type: String,
     required: true
   },
-  google_id: {
+  NOX: {
     type: String,
     required: true
   },
-  votedFor: {
-    type: String
+  temperature: {
+    type: String,
+    required: true
   },
-  isVoted: {
-    type: Boolean,
-    default: false
+  efficiency: {
+    type: String,
+    required: true
   }
 });
 
