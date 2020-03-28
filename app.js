@@ -31,14 +31,19 @@ app.get("/", (req, res) => {
 
 app.post("/send", (req, res) => {
   // add data to cloud
-  var engineId = req.body.engineid; 
-  var massFlow = req.body.massflow; 
-  var dieselFlow = req.body.dieselflow; 
-  var nox = req.body.nox; 
-  var temperature = req.body.temp; 
-  var efficiency = req.body.efficiency; 
+  var engineId = req.body.engineid;
+  var massFlow = req.body.massflow;
+  var dieselFlow = req.body.dieselflow;
+  var nox = req.body.nox;
+  var temperature = req.body.temp;
+  var efficiency = req.body.efficiency;
   const newEntry = new SensorData({
-    engineId, massFlow, dieselFlow, nox, temperature, efficiency
+    engineId,
+    massFlow,
+    dieselFlow,
+    nox,
+    temperature,
+    efficiency
   });
   newEntry
     .save()
@@ -46,17 +51,23 @@ app.post("/send", (req, res) => {
     .catch(err => console.log("DB Error : " + err));
 });
 
-app.post("/view",(req,res)=>{
-  var engineId = req.body.engineid;
+app.post("/view", (req, res) => {
+  var engineId = req.body.engineId;
+  console.log(engineId);
   SensorData.find({ engineId })
-  .then(user => {
-    if (user) {
-      res.json(user);
-    } else {
-      res.json({ idErr: "Id is not added" });
-    }
-  })
-  .catch(err => console.log("Error : " + err));
-})
+    .sort({ date: -1 })
+    .then(data => {
+      if (data && data.length > 0) {
+        var respArray = [];
+        data.forEach(elem => {
+          respArray.push({ elem: elem, date: elem._id.getTimestamp() });
+        });
+        res.json(respArray);
+      } else {
+        res.json({ idErr: "Id is not added" });
+      }
+    })
+    .catch(err => console.log("Error : " + err));
+});
 
 app.listen(PORT, () => console.log(`Server running at port ${PORT}`));
