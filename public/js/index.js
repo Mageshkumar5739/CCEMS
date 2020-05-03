@@ -1,3 +1,18 @@
+$("#defButton").on("click", event => {
+  //var eid = $("#input-box").val();
+  $.ajax({
+    url: "/viewAll",
+    type: "POST",
+    dataType: "json",
+    //data: { engineId: eid },
+    success: function(res) {
+      if (typeof res.idErr === "undefined") {
+        showTable(res);
+      }
+    }
+  });
+});
+
 $("#search-btn").on("click", event => {
   var eid = $("#input-box").val();
   $.ajax({
@@ -12,7 +27,6 @@ $("#search-btn").on("click", event => {
     }
   });
 });
-
 var showTable = function(res) {
   var currentEngineData = {
     engineId: "",

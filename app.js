@@ -55,12 +55,52 @@ app.post("/view", (req, res) => {
   var engineId = req.body.engineId;
   console.log(engineId);
   SensorData.find({ engineId })
-    .sort({ date: -1 })
+    .sort({ date: -1 }) //was date: -1
     .then(data => {
       if (data && data.length > 0) {
         var respArray = [];
         data.forEach(elem => {
           respArray.push({ elem: elem, date: elem._id.getTimestamp() });
+        });
+        res.json(respArray);
+      } else {
+        res.json({ idErr: "Id is not added" });
+      }
+    })
+    .catch(err => console.log("Error : " + err));
+});
+
+app.post("/viewAll", (req, res) => {
+  var engineId = req.body.engineId;
+  console.log(engineId);
+  SensorData
+  .aggregate(
+    [      
+        { "$sort": { "engineId": 1, "date": -1 } }, 
+        { "$group": {                                           //sorting and grouping to bring latest data for each engineId
+            "_id": "$engineId",
+            "engineId":{ "$last": "$engineId"},
+            "dieselFlow": { "$last": "$dieselFlow" },
+            "massFlow": { "$last": "$massFlow" },
+            "nox": { "$last": "$nox" },
+            "temperature": { "$last": "$temperature" },
+            "efficiency": { "$last": "$efficiency" },
+        }},
+        { "$match": { "efficiency": {"$lt":"80" } , "nox": {"$gt":"65"} }}, //change critical value here. $gt - greater than, $gte - greater than and equal to
+    ],
+    function(err,result) {
+      if (err) {
+        console.log(err);
+        return;
+    }
+    console.log(result);
+    }
+)
+    .then(data => {
+      if (data && data.length > 0) {
+        var respArray = [];
+        data.forEach(elem => {
+          respArray.push({ elem: elem}); //removed date: elem._id.getTimestamp() temporarily
         });
         res.json(respArray);
       } else {
